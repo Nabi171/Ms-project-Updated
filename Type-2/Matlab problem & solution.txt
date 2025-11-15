@@ -1,0 +1,47 @@
+% Parameters
+K  = 0.5;
+L  = 1.0;
+N  = 20;
+dx = L / N;
+x  = linspace(0, L, N+1);
+
+Tfinal = 1.0;
+dt     = 0.0025;
+numSteps = round(Tfinal/dt);
+
+% Initial condition
+u = sin(pi*x);
+
+t_store = [0.2, 1.0];
+u_store = cell(size(t_store));
+t = 0;
+
+for n = 1:numSteps
+    u_new = u;
+    for i = 2:N
+        u_new(i) = u(i) + dt*K*(u(i+1) - 2*u(i) + u(i-1))/dx^2;
+    end
+    u = u_new;
+    t = t + dt;
+
+    for k = 1:length(t_store)
+        if isempty(u_store{k}) && abs(t - t_store(k)) < dt/2
+            u_store{k} = u;
+        end
+    end
+end
+
+% Exact solution
+u_exact = @(x,t,K) exp(-(pi^2)*K*t).*sin(pi*x);
+
+figure;
+for k = 1:length(t_store)
+    ts = t_store(k);
+    subplot(1,2,k)
+    plot(x, u_store{k}, 'o-'); hold on;
+    plot(x, u_exact(x, ts, K), '--');
+    xlabel('x'); ylabel('u(x,t)');
+    title(sprintf('t = %.1f', ts));
+    legend('Numerical (MOL + Euler)','Analytical','Location','best');
+    grid on;
+end

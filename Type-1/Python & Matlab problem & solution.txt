@@ -1,0 +1,42 @@
+% heat_exact_plots.m
+% Plots for the exact solution u(x,t) = x^2 / (1 + t)
+% Domain: 0 <= x <= 1, 0 <= t <= 0.1
+
+clear; clc; close all;
+
+% Grid
+Nx = 100;
+Nt = 100;
+x  = linspace(0, 1, Nx+1);
+t  = linspace(0, 0.1, Nt+1);
+[X, T] = meshgrid(x, t);
+
+% Exact solution
+U = X.^2 ./ (1 + T);
+
+%% 1) Surface-like plot
+figure;
+surf(X, T, U, 'EdgeColor', 'none');
+xlabel('x');
+ylabel('t');
+zlabel('u(x,t)');
+title('Exact Solution u(x,t) = x^2 / (1 + t)');
+colorbar;
+view(45, 30);
+grid on;
+
+%% 2) Line plots at fixed times
+figure;
+hold on;
+times_to_plot = [0.0, 0.02, 0.05, 0.1];
+for k = 1:length(times_to_plot)
+    tt = times_to_plot(k);
+    u_line = x.^2 ./ (1 + tt);
+    plot(x, u_line, 'DisplayName', sprintf('t = %.2f', tt));
+end
+xlabel('x');
+ylabel('u(x,t)');
+title('Exact Solution at Selected Times');
+legend('Location', 'best');
+grid on;
+hold off;
